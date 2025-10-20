@@ -3,51 +3,31 @@
 # https://www.acmicpc.net/problem/11931
 from sys import stdin
 
+def h_sort(nums, h):
+    for i in range(h, len(nums)):
+        for j in range(i-h, -1, -h):
+            if nums[j] > nums[j+h]:
+                break
+            nums[j], nums[j+h] = nums[j+h], nums[j]
 
-def read_input():
+# Shell Sort를 사용하여 문제를 풀 것이다.
+def solution():
     N = int(stdin.readline())
-    all_nums = [int(stdin.readline())
-                for _ in range(N)]
-    return N, all_nums
+    nums = [int(stdin.readline()) for _ in range(N)]
 
+    # N을 넘지 않는 h의 최대값을 구한다.
+    h = 1
+    while h < N/3:
+        h = 3*h + 1
 
-# Implemented by merge sort
-def solve(N: int, all_nums: list[int]):
-    def merge(left_nums: list[int], right_nums: list[int]) -> list[int]:
-        i = 0
-        j = 0
-        nums = []
+    # h = ..., 13, 4, 1 순으로 h-sort를 반복한다.
+    while h >= 1:
+        h_sort(nums, h)
+        h = h//3
 
-        while True:
-            if i == len(left_nums):
-                nums.extend(right_nums[j:])
-                break
-            if j == len(right_nums):
-                nums.extend(left_nums[i:])
-                break
-
-            if left_nums[i] >= right_nums[j]:
-                nums.append(left_nums[i])
-                i += 1
-            else:
-                nums.append(right_nums[j])
-                j += 1
-        return nums
-
-    def sort(nums: list[int]) -> list[int]:
-        if len(nums) == 1:
-            return nums
-
-        mid = len(nums) // 2
-        return merge(sort(nums[:mid]), sort(nums[mid:]))
-
-    # BEGIN
-    return sort(all_nums)
-
-
-def print_output(nums: list[int]):
-    print('\n'.join(map(str, nums)))
-
+    # 이제 답을 출력한다.
+    for num in nums:
+        print(num)
 
 if __name__ == '__main__':
-    print_output(solve(*read_input()))
+    solution()
