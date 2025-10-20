@@ -70,34 +70,39 @@ class Board:
     def goal(self):
         return self.manhattan() == 0
 
-# 2차원 입력 데이터를 1차원 배열로 받는다.
-input_data = []
-for _ in range(3):
-    for c in stdin.readline().split():
-        input_data.append(c)
+# A* Search를 사용하여 문제를 풀 것이다.
+def solution():
+    # 2차원 입력 데이터를 1차원 배열로 받는다.
+    input_data = []
+    for _ in range(3):
+        for c in stdin.readline().split():
+            input_data.append(c)
 
-# 1차원 배열 데이터를 문자열로 변환하고 Board 클래스로 캡슐화한다.
-# 원 보드와 그 트윈 중 반드시 하나만 목표에 도달할 수 있다.
-first_board = Board(''.join(input_data))
-twin_board = first_board.twin()
+    # 1차원 배열 데이터를 문자열로 변환하고 Board 클래스로 캡슐화한다.
+    # 원 보드와 그 트윈 중 반드시 하나만 목표에 도달할 수 있다.
+    first_board = Board(''.join(input_data))
+    twin_board = first_board.twin()
 
-# 큐의 아이템은 (예상 움직임, 현재 보드, 현재 움직임, 트윈 여부)이다.
-queue = []
-heappush(queue, (0 + first_board.manhattan(), first_board, 0, False))
-heappush(queue, (0 + twin_board.manhattan(), twin_board, 0, True))
+    # 큐의 아이템은 (예상 움직임, 현재 보드, 현재 움직임, 트윈 여부)이다.
+    queue = []
+    heappush(queue, (0 + first_board.manhattan(), first_board, 0, False))
+    heappush(queue, (0 + twin_board.manhattan(), twin_board, 0, True))
 
-visited = set()
-while queue:
-    pred_move, board, move, twin = heappop(queue)
-    visited.add(board.s)
+    visited = set()
+    while queue:
+        pred_move, board, move, twin = heappop(queue)
+        visited.add(board.s)
 
-    # 현재 보드가 목표에 도달했으면 답을 출력하고 루프를 종료한다.
-    if board.goal():
-        print(move if not twin else -1)
-        break
+        # 현재 보드가 목표에 도달했으면 답을 출력하고 루프를 종료한다.
+        if board.goal():
+            print(move if not twin else -1)
+            break
 
-    # 현재 보드의 이웃들을 구해서 이미 방문했던 것만 제외하고 큐에 넣는다.
-    for next_board in board.neighbors():
-        if next_board.s in visited:
-            continue
-        heappush(queue, (move+1 + next_board.manhattan(), next_board, move+1, twin))
+        # 현재 보드의 이웃들을 구해서 이미 방문했던 것만 제외하고 큐에 넣는다.
+        for next_board in board.neighbors():
+            if next_board.s in visited:
+                continue
+            heappush(queue, (move+1 + next_board.manhattan(), next_board, move+1, twin))
+
+if __name__ == '__main__':
+    solution()
