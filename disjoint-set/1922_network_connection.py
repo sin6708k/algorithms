@@ -1,6 +1,6 @@
-# 집합의 표현
-# Gold V
-# https://www.acmicpc.net/problem/1717
+# 네트워크 연결
+# Gold IV
+# https://www.acmicpc.net/problem/1922
 from sys import stdin
 
 class UnionFind:
@@ -32,17 +32,30 @@ class UnionFind:
         return self.root(x) == self.root(y)
 
 def solution():
-    N, M = map(int, stdin.readline().split())
+    N = int(stdin.readline())
+    M = int(stdin.readline())
+
+    # Kruskal's Algorithm을 수행하기 위해 간선을 오름차순 정렬한다.
+    edges = [tuple(map(int, stdin.readline().split())) for _ in range(M)]
+    edges.sort(key=lambda x: x[2])
+
+    # 사이클을 판별하기 위해 Union Find를 사용할 것이다.
     uf = UnionFind(N)
+    edge_count = 0
+    sum_weight = 0
 
-    for _ in range(M):
-        op, x, y = map(int, stdin.readline().split())
+    for u, v, w in edges:
+        if uf.find(u, v):
+            continue
+        uf.union(u, v)
 
-        # 입력이 0이면 합집합 연산을 수행하고, 1이면 집합의 연결 여부를 출력한다.
-        if op == 0:
-            uf.union(x, y)
-        elif op == 1:
-            print('YES' if uf.find(x, y) else 'NO')
+        # 이 간선이 사이클을 만들지 않는다면 MST를 구성하는 간선으로 선택한다.
+        edge_count += 1
+        sum_weight += w
+        if edge_count == N-1:
+            break
+
+    print(sum_weight)
 
 if __name__ == '__main__':
     solution()
