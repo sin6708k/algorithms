@@ -1,45 +1,38 @@
 # 최단경로
 # Gold IV
 # https://www.acmicpc.net/problem/1753
-from sys import stdin
+import math
 from heapq import heappush, heappop
-from itertools import islice
+from sys import stdin
 
+V, E = map(int, stdin.readline().split())
+K = int(stdin.readline())
 
-def read_input():
-    V, E = map(int, stdin.readline().split())
-    K = int(stdin.readline())
-    graph = [[] for _ in range(V + 1)]  # v = 0 is unused
+# 인접 리스트 방식으로 그래프를 구현한다.
+graph = [[] for _ in range(V+1)]
+for _ in range(E):
+    u, v, w = map(int, stdin.readline().split())
+    graph[u].append((v, w))
 
-    for _ in range(E):
-        v, u, w = map(int, stdin.readline().split())
-        graph[v].append((u, w))
-    return V, E, K, graph
+dist = [math.inf] * (V+1)
+dist[K] = 0
 
+# 본래 Dijkstra's Algorithm에는 Indexed PQ를 사용해야 하나,
+# 여기서는 일반적인 우선순위 큐를 사용하겠다.
+pq = [(0, K)]
+included = [False] * (V+1)
 
-def solve(V: int, E: int, K: int, graph: list[tuple[int, int]]):
-    dists = [10 ** 9] * (V + 1)
-    to_visit = []
+while pq:
+    _, u = heappop(pq)
 
-    dists[K] = 0
-    heappush(to_visit, (0, K))
+    if included[u]:
+        continue
+    included[u] = True
 
-    while to_visit:
-        dist, v = heappop(to_visit)
-        if dists[v] < dist:
-            continue
+    for v, w in graph[u]:
+        if dist[v] > dist[u] + w:
+            dist[v] = dist[u] + w
+            heappush(pq, (dist[v], v))
 
-        for u, w in graph[v]:
-            if dist + w < dists[u]:
-                dists[u] = dist + w
-                heappush(to_visit, (dist + w, u))
-    return dists
-
-
-def print_output(dists: list[int]):
-    print('\n'.join((str(dist) if dist < 10 ** 9 else 'INF'
-                     for dist in islice(dists, 1, None))))
-
-
-if __name__ == '__main__':
-    print_output(solve(*read_input()))
+for u in range(1, V+1):
+    print(dist[u] if dist[u] != math.inf else 'INF')
