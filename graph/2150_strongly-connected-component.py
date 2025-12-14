@@ -4,8 +4,8 @@
 from collections import deque
 from sys import stdin
 
-def dfs(start, graph, visited):
-    stack = [(start, 0)]
+def dfs(s, graph, visited):
+    stack = [(s, 0)]
     order = deque()
 
     while stack:
@@ -31,21 +31,21 @@ def solution():
     graph = [[] for _ in range(V+1)]
     graph_reversed = [[] for _ in range(V+1)]
     for _ in range(E):
-        v, w = map(int, stdin.readline().split())
-        graph[v].append(w)
-        graph_reversed[w].append(v)
+        u, v = map(int, stdin.readline().split())
+        graph[u].append(v)
+        graph_reversed[v].append(u)
 
     # 역그래프의 모든 정점에 DFS를 수행하여 Topological Order를 구한다.
     visited = [False] * (V+1)
     order = []
-    for v in range(1, V+1):
-        order = dfs(v, graph_reversed, visited) + order
+    for u in range(1, V+1):
+        order = dfs(u, graph_reversed, visited) + order
 
     # 구한 순서의 반대로 원 그래프에 DFS를 수행한다.
     visited = [False] * (V+1)
     components = []
-    for v in order:
-        component = dfs(v, graph, visited)
+    for u in order:
+        component = dfs(u, graph, visited)
         if component:
             components.append(component)
 
