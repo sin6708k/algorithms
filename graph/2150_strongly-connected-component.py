@@ -27,7 +27,8 @@ def dfs(s, graph, visited):
 def solution():
     V, E = map(int, stdin.readline().split())
 
-    # 인접 리스트 방식으로 그래프를 구현하며, 동시에 역그래프도 구한다.
+    # 인접 리스트 방식으로 그래프를 구현하며,
+    # 동시에 Kosaraju–Sharir Algorithm을 수행하기 위한 역그래프도 구한다.
     graph = [[] for _ in range(V+1)]
     graph_reversed = [[] for _ in range(V+1)]
     for _ in range(E):
@@ -49,12 +50,10 @@ def solution():
         if component:
             components.append(component)
 
-    # 구한 SCC를 정렬한다.
     for component in components:
         component.sort()
     components.sort(key=lambda x: x[0])
 
-    # 모든 SCC를 출력한다.
     print(len(components))
     for component in components:
         print(*component, -1)
